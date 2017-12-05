@@ -21,49 +21,52 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class Main2Activity extends AppCompatActivity implements OnMapReadyCallback {
     TabHost tabHost;
+
+    //DB에 필요한 변수
     TextView idView;
     EditText studentName;
     EditText studentNum;
 
+    //Thread에 필요한 변수
     private Handler mHandler;
     private TextView timerbutton;
     private NumberThread timerThread;
 
-    Button go, right, left;
+    //Web View에 필요한 변수
+    Button go;
     EditText uri;
     WebView wv;
     View.OnClickListener cl;
     String weburi;
 
-    class MyWeb extends WebViewClient {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return super.shouldOverrideUrlLoading(view, url);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        //맵 구동시 필요한 코드들
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //DB 구동에 필요한 코드
         idView = (TextView) findViewById(R.id.studentID);
         studentName = (EditText) findViewById(R.id.studentName);
         studentNum =
                 (EditText) findViewById(R.id.studentNumber);
 
+        //Thread 구동에 필요한 코드
         timerbutton = (TextView) findViewById(R.id.timer_button);
         mHandler = new Handler();
 
+        //Web View 구동에 필요한 코드
         go = (Button) findViewById(R.id.go);
         uri = (EditText) findViewById(R.id.uri);
         wv = (WebView) findViewById(R.id.wv);
         wv.setWebViewClient(new MyWeb());
 
-
+        //Web View 핵심 코드
         cl = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +84,7 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
 
         go.setOnClickListener(cl);
 
+        //Title
         setTitle("반갑습니다");
 
         tabHost = (TabHost) findViewById(R.id.tabhost);
@@ -100,6 +104,7 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         tabHost.addTab(web);
     }
 
+    //Map에 사용한 메소드
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng hywoman = new LatLng(37.558182, 127.049907); // LatLng sydney = new LatLng(-33.852, 151.211);
@@ -107,10 +112,7 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(hywoman));
     }
 
-
-
-
-
+    //DB에 사용한 메소드 ===> 학생 추가
     public void newStudent(View view) {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         int sname =
@@ -121,8 +123,8 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
 //        studentName.setText("");
 //        studentNum.setText("");
 
+        //따로 추가해준 코드*******************************
         boolean student_boolean = dbHandler.deleteStudent(studentName.getText().toString());
-        dbHandler.addStudent(student);
         if (student_boolean)
         {
             idView.setText(" 학생 추가 완료!"); //학생 추가 버튼을 누르면 뜨게 함
@@ -133,6 +135,7 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
             idView.setText(" 학생 정보가 없습니다."); //
     }
 
+    //DB에 사용한 메소드 ===> 학생 검색
     public void lookupStudent(View view) {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
         Student student =
@@ -145,6 +148,7 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    //DB에 사용한 메소드 ===> 학생 삭제
     public void removeStudent(View view) {
         MyDBHandler dbHandler = new MyDBHandler(this, null,
                 null, 1);
@@ -160,6 +164,8 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
             idView.setText(" 학생 정보가 없습니다.");
     }
 
+
+    //Thread에 사용한 메소드
     public void onButtonClick(View v){
         switch (v.getId()) {
             case R.id.btn_start:
@@ -174,6 +180,7 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    //Thread를 사용하기 위해 이너 클래스를 추가하였다.
     class NumberThread extends Thread {
 
         private int i = 1;
@@ -201,6 +208,14 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
                     }
                 });
             }
+        }
+    }
+
+    //Web View를 사용하기 위해 이너 클래스를 추가하였다.
+    class MyWeb extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return super.shouldOverrideUrlLoading(view, url);
         }
     }
 
