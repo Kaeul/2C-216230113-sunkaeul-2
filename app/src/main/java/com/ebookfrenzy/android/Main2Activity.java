@@ -4,6 +4,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -26,6 +29,19 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
     private TextView timerbutton;
     private NumberThread timerThread;
 
+    Button go, right, left;
+    EditText uri;
+    WebView wv;
+    View.OnClickListener cl;
+    String weburi;
+
+    class MyWeb extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +58,28 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         timerbutton = (TextView) findViewById(R.id.timer_button);
         mHandler = new Handler();
 
+        go = (Button) findViewById(R.id.go);
+        uri = (EditText) findViewById(R.id.uri);
+        wv = (WebView) findViewById(R.id.wv);
+        wv.setWebViewClient(new MyWeb());
+
+
+        cl = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.go :
+                        weburi = uri.getText().toString();
+                        if(weburi.startsWith("http://")) {
+                            wv.loadUrl(weburi);
+                        } else {
+                            wv.loadUrl("http://" + weburi); }
+                        break;
+                }
+            }
+        };
+
+        go.setOnClickListener(cl);
 
         setTitle("반갑습니다");
 
@@ -52,12 +90,14 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         TabHost.TabSpec thread = tabHost.newTabSpec("2").setContent(R.id.thread).setIndicator("스레드");
         TabHost.TabSpec db = tabHost.newTabSpec("3").setContent(R.id.db).setIndicator("DB");
         TabHost.TabSpec google = tabHost.newTabSpec("4").setContent(R.id.google).setIndicator("Google Map");
+        TabHost.TabSpec web = tabHost.newTabSpec("5").setContent(R.id.web).setIndicator("Web View");
 
 
         tabHost.addTab(me);
         tabHost.addTab(thread);
         tabHost.addTab(db);
         tabHost.addTab(google);
+        tabHost.addTab(web);
     }
 
     @Override
@@ -66,6 +106,10 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         googleMap.addMarker(new MarkerOptions().position(hywoman).title("한양여자대학교"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(hywoman));
     }
+
+
+
+
 
     public void newStudent(View view) {
         MyDBHandler dbHandler = new MyDBHandler(this, null, null, 1);
@@ -159,4 +203,11 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
             }
         }
     }
+
+
+
+
+
+
+
 }

@@ -27,4 +27,5 @@
     <string name="_0">시작 버튼을 눌러주세요.</string>
     <string name="thread">발표 시작</string>
     <string name="thread2">발표 끝</string>
+    <string name="go">검색</string>
 </resources>
