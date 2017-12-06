@@ -120,11 +120,9 @@ public class Main2Activity extends AppCompatActivity implements OnMapReadyCallba
         Student student =
                 new Student(studentName.getText().toString(), sname);
         dbHandler.addStudent(student);
-//        studentName.setText("");
-//        studentNum.setText("");
 
-        //따로 추가해준 코드*******************************
         boolean student_boolean = dbHandler.deleteStudent(studentName.getText().toString());
+        dbHandler.addStudent(student);
         if (student_boolean)
         {
             idView.setText(" 학생 추가 완료!"); //학생 추가 버튼을 누르면 뜨게 함
